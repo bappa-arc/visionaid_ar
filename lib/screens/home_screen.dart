@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../screens/fully_blind_screen.dart';
+import '../screens/partially_blind_screen.dart';
+import '../screens/color_blind_screen.dart';
+import '../screens/normal_user_screen.dart';
+import '../widgets/accessibility_option_card.dart';
 
 class AccessibilityScreen extends StatefulWidget {
   @override
@@ -10,33 +15,6 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
 
-  final List<_AccessibilityOption> options = [
-    _AccessibilityOption(
-      title: "Fully Blind",
-      subtitle: "Navigate with audio",
-      icon: Icons.visibility_off,
-      onTap: () {},
-    ),
-    _AccessibilityOption(
-      title: "Partially Blind",
-      subtitle: "Enhance visuals",
-      icon: Icons.blur_linear,
-      onTap: () {},
-    ),
-    _AccessibilityOption(
-      title: "Color Blind",
-      subtitle: "Adjust colors",
-      icon: Icons.palette,
-      onTap: () {},
-    ),
-    _AccessibilityOption(
-      title: "Normal",
-      subtitle: "Default settings",
-      icon: Icons.visibility,
-      onTap: () {},
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -45,7 +23,14 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
       duration: Duration(milliseconds: 800),
     )..repeat(reverse: true);
 
-    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.3).animate(_controller);
+    _opacityAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.3,
+    ).animate(_controller);
+    _opacityAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.3,
+    ).animate(_controller);
   }
 
   @override
@@ -56,90 +41,97 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
 
   @override
   Widget build(BuildContext context) {
+    final options = [
+      AccessibilityOption(
+        title: "Fully Blind",
+        subtitle: "Navigate with audio",
+        icon: Icons.visibility_off,
+        onTap:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => FullyBlindScreen()),
+            ),
+      ),
+      AccessibilityOption(
+        title: "Partially Blind",
+        subtitle: "Enhance visuals",
+        icon: Icons.blur_linear,
+        onTap:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => PartiallyBlindScreen()),
+            ),
+      ),
+      AccessibilityOption(
+        title: "Color Blind",
+        subtitle: "Adjust colors",
+        icon: Icons.palette,
+        onTap:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => ColorBlindScreen()),
+            ),
+      ),
+      AccessibilityOption(
+        title: "Normal",
+        subtitle: "Default settings",
+        icon: Icons.visibility,
+        onTap:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => NormalUserScreen()),
+            ),
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
-  title: Text('Accessibility Options'),
-  backgroundColor: const Color.fromARGB(255, 157, 168, 230),
-  actions: [
-    IconButton(
-      icon: Icon(Icons.mic),
-      onPressed: () {
-        print("Mic icon pressed");
-        // Add your action for the mic button here
-      },
-    ),
-    IconButton(
-      icon: Icon(Icons.settings),
-      onPressed: () {
-        print("Settings icon pressed");
-        // Add your action for the settings button here
-      },
-    ),
-  ],
-),
-
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            AnimatedBuilder(
-              animation: _opacityAnimation,
-              builder: (context, child) => Opacity(
-                opacity: _opacityAnimation.value,
-                child: Icon(Icons.remove_red_eye, size: 48, color: Colors.blue),
+        title: Text('Accessibility Options'),
+        backgroundColor: const Color.fromARGB(255, 157, 168, 230),
+        actions: [
+          IconButton(icon: Icon(Icons.mic), onPressed: () {}),
+          IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              AnimatedBuilder(
+                animation: _opacityAnimation,
+                builder:
+                    (context, child) => Opacity(
+                      opacity: _opacityAnimation.value,
+                      child: Icon(
+                        Icons.remove_red_eye,
+                        size: 48,
+                        color: Colors.blue,
+                      ),
+                    ),
               ),
-            ),
-            SizedBox(height: 12),
-            Text(
-              "Select Your Visual Ability",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 24),
-            ...options.map((opt) => _buildOptionCard(context, opt)),
-            Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: FloatingActionButton.extended(
-                onPressed: () {},
-                icon: Icon(Icons.phone, color: const Color.fromARGB(255, 0, 0, 0)),
-                label: Text("SOS Calls"),
-                backgroundColor: Colors.redAccent,
+              SizedBox(height: 12),
+              Text(
+                "Select Your Visual Ability",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 24),
+              ...options.map((opt) => AccessibilityOptionCard(option: opt)),
+              SizedBox(height: 40),
+            ],
+          ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // SOS action goes here
+        },
+        icon: Icon(Icons.phone, color: Colors.black),
+        label: Text("SOS Calls"),
+        backgroundColor: Colors.redAccent,
       ),
     );
   }
-
-  Widget _buildOptionCard(BuildContext context, _AccessibilityOption opt) {
-    return GestureDetector(
-      onTap: opt.onTap,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: EdgeInsets.symmetric(vertical: 8),
-        elevation: 3,
-        child: ListTile(
-          leading: Icon(opt.icon, size: 32, color: Colors.blueAccent),
-          title: Text(opt.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          subtitle: Text(opt.subtitle),
-          trailing: Icon(Icons.arrow_forward_ios, size: 16),
-        ),
-      ),
-    );
-  }
-}
-
-class _AccessibilityOption {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  _AccessibilityOption({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.onTap,
-  });
 }
