@@ -5,6 +5,7 @@ import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:visionaid_ar/features/tts_helper.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class FullyBlindScreen extends StatefulWidget {
   @override
@@ -62,6 +63,11 @@ class _FullyBlindScreenState extends State<FullyBlindScreen> {
             final label =
                 obj.labels.isNotEmpty ? obj.labels.first.text : "an object";
             tts.speak("Detected $label");
+
+            //Haptic feedback
+            if (await Vibrate.canVibrate) {
+              Vibrate.feedback(FeedbackType.warning);
+            }
           }
         }
       });
