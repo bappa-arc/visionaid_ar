@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import '../screens/fully_blind_screen.dart';
 import '../screens/partially_blind_screen.dart';
 import '../screens/color_blind_screen.dart';
@@ -46,41 +47,57 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
         title: "Fully Blind",
         subtitle: "Navigate with audio",
         icon: Icons.visibility_off,
-        onTap:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => FullyBlindScreen()),
-            ),
+        onTap: () async {
+          if (await Vibrate.canVibrate) {
+            Vibrate.feedback(FeedbackType.success);
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => FullyBlindScreen()),
+          );
+        },
       ),
       AccessibilityOption(
         title: "Partially Blind",
         subtitle: "Enhance visuals",
         icon: Icons.blur_linear,
-        onTap:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => PartiallyBlindScreen()),
-            ),
+        onTap: () async {
+          if (await Vibrate.canVibrate) {
+            Vibrate.feedback(FeedbackType.success);
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => PartiallyBlindScreen()),
+          );
+        },
       ),
       AccessibilityOption(
         title: "Color Blind",
         subtitle: "Adjust colors",
         icon: Icons.palette,
-        onTap:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => ColorBlindScreen()),
-            ),
+        onTap: () async {
+          if (await Vibrate.canVibrate) {
+            Vibrate.feedback(FeedbackType.success);
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ColorBlindScreen()),
+          );
+        },
       ),
       AccessibilityOption(
         title: "Normal",
         subtitle: "Default settings",
         icon: Icons.visibility,
-        onTap:
-            () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => NormalUserScreen()),
-            ),
+        onTap: () async {
+          if (await Vibrate.canVibrate) {
+            Vibrate.feedback(FeedbackType.success);
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => NormalUserScreen()),
+          );
+        },
       ),
     ];
 
@@ -125,7 +142,10 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
+        onPressed: () async {
+          if (await Vibrate.canVibrate) {
+            Vibrate.feedback(FeedbackType.error);
+          }
           // SOS action goes here
         },
         icon: Icon(Icons.phone, color: Colors.black),
