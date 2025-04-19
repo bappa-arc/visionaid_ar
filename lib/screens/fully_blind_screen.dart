@@ -1,10 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:visionaid_ar/features/tts_helper.dart';
-import 'dart:io';
 
 class FullyBlindScreen extends StatefulWidget {
   @override
@@ -12,16 +12,16 @@ class FullyBlindScreen extends StatefulWidget {
 }
 
 class _FullyBlindScreenState extends State<FullyBlindScreen> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+  CameraController? _controller;
+  Future<void>? _initCameraFuture;
   final tts = TTSHelper();
   late ObjectDetector _objectDetector;
 
   @override
   void initState() {
     super.initState();
-    _initCamera();
     _initObjectDetector();
+    _initCamera();
   }
 
   void _initObjectDetector() {
@@ -34,19 +34,24 @@ class _FullyBlindScreenState extends State<FullyBlindScreen> {
   }
 
   Future<void> _initCamera() async {
-    final cameras = await availableCameras();
-    _controller = CameraController(cameras[0], ResolutionPreset.medium);
-    _initializeControllerFuture = _controller.initialize();
-    setState(() {});
+    try {
+      final cameras = await availableCameras();
+      _controller = CameraController(cameras[0], ResolutionPreset.medium);
+      _initCameraFuture = _controller!.initialize();
+      await _initCameraFuture;
+      setState(() {}); // trigger rebuild after camera is ready
+    } catch (e) {
+      print("Camera init error: $e");
+      tts.speak("Camera initialization failed.");
+    }
   }
 
   Future<void> _detectObjects() async {
     try {
-      await _initializeControllerFuture;
-
+      if (_controller == null || !_controller!.value.isInitialized) return;
       final tempDir = await getTemporaryDirectory();
       final imagePath = join(tempDir.path, '${DateTime.now()}.jpg');
-      await _controller.takePicture().then((file) async {
+      await _controller!.takePicture().then((file) async {
         final inputImage = InputImage.fromFilePath(file.path);
         final objects = await _objectDetector.processImage(inputImage);
 
@@ -61,14 +66,14 @@ class _FullyBlindScreenState extends State<FullyBlindScreen> {
         }
       });
     } catch (e) {
-      print("Error detecting objects: $e");
-      tts.speak("Failed to detect objects");
+      print("Detection error: $e");
+      tts.speak("Object detection failed.");
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     _objectDetector.close();
     super.dispose();
   }
@@ -80,36 +85,43 @@ class _FullyBlindScreenState extends State<FullyBlindScreen> {
         title: Text("Fully Blind Mode"),
         backgroundColor: const Color.fromARGB(255, 157, 168, 230),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder<void>(
-              future: _initializeControllerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return CameraPreview(_controller);
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed:
-                    () => tts.speak(
-                      "Camera is active. Tap detect to identify objects.",
-                    ),
-                child: Text("Speak"),
+      body:
+          _controller == null
+              ? Center(child: Text("Loading camera..."))
+              : FutureBuilder(
+                future: _initCameraFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Column(
+                      children: [
+                        Expanded(child: CameraPreview(_controller!)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed:
+                                  () =>
+                                      tts.speak("Camera is ready. Tap detect."),
+                              child: Text("Speak"),
+                            ),
+                            ElevatedButton(
+                              onPressed: _detectObjects,
+                              child: Text("Detect"),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text("Camera Error: ${snapshot.error}"),
+                    );
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                },
               ),
-              ElevatedButton(onPressed: _detectObjects, child: Text("Detect")),
-            ],
-          ),
-          SizedBox(height: 20),
-        ],
-      ),
     );
   }
 }
