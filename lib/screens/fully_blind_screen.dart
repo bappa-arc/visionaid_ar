@@ -4,7 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:google_mlkit_object_detection/google_mlkit_object_detection.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
-import 'package:visionaid_ar/features/tts_helper.dart';
+import 'package:visionaid_ar/features/fully_blind/tts_helper.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 
 class FullyBlindScreen extends StatefulWidget {
