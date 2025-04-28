@@ -31,7 +31,7 @@ class AccessibilityOptionCard extends StatelessWidget {
           leading: Icon(option.icon, size: 32, color: Colors.blueAccent),
           title: Text(
             option.title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
           subtitle: Text(option.subtitle),
           trailing: Icon(Icons.arrow_forward_ios, size: 16),
