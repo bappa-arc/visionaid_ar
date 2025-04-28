@@ -131,10 +131,10 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
               Text(
                 "Select Your Visual Ability",
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              SizedBox(height: 24),
+              SizedBox(height: 44),
               ...options.map((opt) => AccessibilityOptionCard(option: opt)),
               SizedBox(height: 40),
             ],
@@ -148,8 +148,15 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
           }
           // SOS action goes here
         },
-        icon: Icon(Icons.phone, color: Colors.black),
-        label: Text("SOS Calls"),
+        icon: Icon(Icons.phone, size: 23, color: Colors.black),
+        label: Text(
+          "SOS Calls",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18, // bigger text
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.redAccent,
       ),
     );
