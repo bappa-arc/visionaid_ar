@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:visionaid_ar/main.dart';
+import 'package:visionaid_ar/screens/fully_blind_screen_tflite.dart';
 import '../screens/fully_blind_screen.dart';
 import '../screens/partially_blind_screen.dart';
 import '../screens/color_blind_screen.dart';
@@ -53,7 +55,9 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
           }
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => FullyBlindScreen()),
+            MaterialPageRoute(
+              builder: (_) => FullyBlindTFLScreen(cameras: cameras),
+            ),
           );
         },
       ),

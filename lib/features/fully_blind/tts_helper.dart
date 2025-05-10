@@ -22,13 +22,14 @@ class TTSHelper {
     });
   }
 
-  Future<void> speak(String text) async {
+  Future<void> speak(String text, {double pitch = 1.0}) async {
     // Wait until no speech is happening
     while (_isSpeaking) {
       await Future.delayed(Duration(milliseconds: 300));
     }
 
     _isSpeaking = true;
+    await _tts.setPitch(pitch);
     await _tts.speak(text);
   }
 
