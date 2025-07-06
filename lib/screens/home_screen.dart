@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:visionaid_ar/main.dart';
 import 'package:visionaid_ar/screens/fully_blind_screen_tflite.dart';
-import '../screens/fully_blind_screen.dart';
 import '../screens/partially_blind_screen.dart';
 import '../screens/color_blind_screen.dart';
 import '../screens/normal_user_screen.dart';
 import '../widgets/accessibility_option_card.dart';
+import 'package:visionaid_ar/screens/ocr_camera_screen.dart';
+
+
 
 class AccessibilityScreen extends StatefulWidget {
   @override
@@ -41,6 +43,7 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
     _controller.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,24 +148,56 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          if (await Vibrate.canVibrate) {
-            Vibrate.feedback(FeedbackType.error);
-          }
-          // SOS action goes here
+      floatingActionButton: Stack(
+  alignment: Alignment.bottomRight,
+  children: [
+    // OCR Floating Button
+    Padding(
+      padding: const EdgeInsets.only(bottom: 80.0),
+      child:
+      FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => OCRCameraScreen()),
+          );
         },
-        icon: Icon(Icons.phone, size: 23, color: Colors.black),
+        backgroundColor: Colors.deepPurple,
+        icon: Icon(Icons.text_snippet, color: Colors.white),
         label: Text(
-          "SOS Calls",
+          "Smart scan",
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 18, // bigger text
+            color: Colors.white,
             fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
         ),
-        backgroundColor: Colors.redAccent,
+        tooltip: "Scan Text (OCR)",
       ),
+    ),
+
+    // SOS Button
+    FloatingActionButton.extended(
+      onPressed: () async {
+        if (await Vibrate.canVibrate) {
+          Vibrate.feedback(FeedbackType.error);
+        }
+        // SOS logic
+      },
+      icon: Icon(Icons.phone, size: 23, color: Colors.black),
+      label: Text(
+        "SOS Calls",
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      backgroundColor: Colors.redAccent,
+    ),
+  ],
+),
+
     );
   }
 }
