@@ -5,10 +5,7 @@ import 'package:visionaid_ar/features/fully_blind/tts_helper.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter/foundation.dart';
-import 'package:visionaid_ar/screens/settings_screen.dart';
 import 'dart:async';
-
-import 'package:visionaid_ar/services/emergency_service.dart';
 
 class FullyBlindTFLScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -32,8 +29,6 @@ class _FullyBlindTFLScreenState extends State<FullyBlindTFLScreen> {
   bool _isListening = false;
   bool _isDetectionActive = true;
   Timer? _listenTimer;
-  bool _isDisposing = false; // Add this flag
-  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -46,49 +41,17 @@ class _FullyBlindTFLScreenState extends State<FullyBlindTFLScreen> {
         "Welcome to VisionAid fully blind mode. Say help for available commands.",
       );
     });
-    Future.delayed(Duration(seconds: 10), () {
+    Future.delayed(Duration(seconds: 5), () {
       _startListening();
     });
   }
 
   @override
   void dispose() {
-    // Show buffer/loading UI and prevent further processing
-    _isDisposing = true;
-    _isDetectionActive = false;
+    _controller.dispose();
+    Tflite.close();
     _listenTimer?.cancel();
-    _speech.stop();
-
-    // Show buffer/loading UI
-    if (mounted) {
-      setState(() {
-        _isDisposed = true;
-      });
-    }
-
-    // Start async cleanup, but don't await (dispose must be sync)
-    _cleanupResources();
-
     super.dispose();
-  }
-
-  Future<void> _cleanupResources() async {
-    try {
-      if (_controller.value.isInitialized &&
-          _controller.value.isStreamingImages) {
-        await _controller.stopImageStream();
-      }
-    } catch (_) {}
-
-    try {
-      if (_controller.value.isInitialized) {
-        await _controller.dispose();
-      }
-    } catch (_) {}
-
-    try {
-      await Tflite.close();
-    } catch (_) {}
   }
 
   Future<void> loadModel() async {
@@ -120,10 +83,7 @@ class _FullyBlindTFLScreenState extends State<FullyBlindTFLScreen> {
   }
 
   void runModel(CameraImage image) async {
-    if (_isDisposing ||
-        _isDisposed ||
-        !mounted ||
-        !isModelLoaded ||
+    if (!isModelLoaded ||
         _isDetecting ||
         image.planes.isEmpty ||
         !_isDetectionActive)
@@ -284,7 +244,6 @@ class _FullyBlindTFLScreenState extends State<FullyBlindTFLScreen> {
     } else if (command.contains("emergency")) {
       _ttsHelper.speak("Emergency mode activated.");
       Vibrate.feedback(FeedbackType.error);
-      EmergencyService.activateEmergencyMode();
       // Add emergency handling logic here
     } else if (command.contains("light on")) {
       try {
@@ -306,10 +265,7 @@ class _FullyBlindTFLScreenState extends State<FullyBlindTFLScreen> {
       }
     } else if (command.contains("settings")) {
       Vibrate.feedback(FeedbackType.light);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => SettingsScreen()),
-      );
+      _ttsHelper.speak("Settings not available yet.");
     } else {
       _ttsHelper.speak("Command not recognized.");
       Vibrate.feedback(FeedbackType.error);
@@ -318,12 +274,6 @@ class _FullyBlindTFLScreenState extends State<FullyBlindTFLScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isDisposed) {
-      return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
     if (!_controller.value.isInitialized) {
       return const Center(child: CircularProgressIndicator());
     }
