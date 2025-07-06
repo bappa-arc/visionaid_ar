@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:visionaid_ar/main.dart';
 import 'package:visionaid_ar/screens/fully_blind_screen_tflite.dart';
+import 'package:visionaid_ar/screens/settings_screen.dart';
+import 'package:visionaid_ar/services/emergency_service.dart';
 import '../screens/partially_blind_screen.dart';
 import '../screens/color_blind_screen.dart';
 import '../screens/normal_user_screen.dart';
 import '../widgets/accessibility_option_card.dart';
 import 'package:visionaid_ar/screens/ocr_camera_screen.dart';
-
-
 
 class AccessibilityScreen extends StatefulWidget {
   @override
@@ -43,7 +43,6 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
     _controller.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +112,15 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
         title: Text('Accessibility Options'),
         backgroundColor: const Color.fromARGB(255, 157, 168, 230),
         actions: [
-          IconButton(icon: Icon(Icons.mic), onPressed: () {}),
-          IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: SafeArea(
@@ -149,55 +155,53 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
         ),
       ),
       floatingActionButton: Stack(
-  alignment: Alignment.bottomRight,
-  children: [
-    // OCR Floating Button
-    Padding(
-      padding: const EdgeInsets.only(bottom: 80.0),
-      child:
-      FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => OCRCameraScreen()),
-          );
-        },
-        backgroundColor: Colors.deepPurple,
-        icon: Icon(Icons.text_snippet, color: Colors.white),
-        label: Text(
-          "Smart scan",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+        alignment: Alignment.bottomRight,
+        children: [
+          // OCR Floating Button
+          Padding(
+            padding: const EdgeInsets.only(bottom: 80.0),
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => OCRCameraScreen()),
+                );
+              },
+              backgroundColor: Colors.deepPurple,
+              icon: Icon(Icons.text_snippet, color: Colors.white),
+              label: Text(
+                "Smart scan",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              tooltip: "Scan Text (OCR)",
+            ),
           ),
-        ),
-        tooltip: "Scan Text (OCR)",
-      ),
-    ),
 
-    // SOS Button
-    FloatingActionButton.extended(
-      onPressed: () async {
-        if (await Vibrate.canVibrate) {
-          Vibrate.feedback(FeedbackType.error);
-        }
-        // SOS logic
-      },
-      icon: Icon(Icons.phone, size: 23, color: Colors.black),
-      label: Text(
-        "SOS Calls",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+          // SOS Button
+          FloatingActionButton.extended(
+            onPressed: () async {
+              if (await Vibrate.canVibrate) {
+                Vibrate.feedback(FeedbackType.error);
+              }
+              EmergencyService.activateEmergencyMode();
+            },
+            icon: Icon(Icons.phone, size: 23, color: Colors.black),
+            label: Text(
+              "SOS Calls",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: Colors.redAccent,
+          ),
+        ],
       ),
-      backgroundColor: Colors.redAccent,
-    ),
-  ],
-),
-
     );
   }
 }
