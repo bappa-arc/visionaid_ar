@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:visionaid_ar/main.dart';
 import 'package:visionaid_ar/screens/fully_blind_screen_tflite.dart';
+import 'package:visionaid_ar/screens/settings_screen.dart';
+import 'package:visionaid_ar/services/emergency_service.dart';
 import '../screens/partially_blind_screen.dart';
 import '../screens/color_blind_screen.dart';
 import '../screens/normal_user_screen.dart';
@@ -113,8 +115,15 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
         title: Text('Accessibility Options'),
         backgroundColor: const Color.fromARGB(255, 157, 168, 230),
         actions: [
-          IconButton(icon: Icon(Icons.mic), onPressed: () {}),
-          IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: SafeArea(
@@ -148,6 +157,7 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
           ),
         ),
       ),
+
       floatingActionButton: Stack(
   alignment: Alignment.bottomRight,
   children: [
@@ -161,6 +171,7 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
             context,
             MaterialPageRoute(builder: (_) => OCRCameraScreen()),
           );
+
         },
         backgroundColor: Colors.deepPurple,
         icon: Icon(Icons.text_snippet, color: Colors.white),
@@ -182,7 +193,7 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
         if (await Vibrate.canVibrate) {
           Vibrate.feedback(FeedbackType.error);
         }
-        // SOS logic
+        EmergencyService.activateEmergencyMode();
       },
       icon: Icon(Icons.phone, size: 23, color: Colors.black),
       label: Text(

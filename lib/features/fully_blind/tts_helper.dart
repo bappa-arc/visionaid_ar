@@ -1,44 +1,64 @@
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TTSHelper {
-  final FlutterTts _tts = FlutterTts();
-  bool _isSpeaking = false;
+  static final TTSHelper _instance = TTSHelper._internal();
+  final FlutterTts _flutterTts = FlutterTts();
 
-  TTSHelper() {
-    _tts.setLanguage("en-US");
-    _tts.setPitch(1.0);
-    _tts.setSpeechRate(0.5);
+  bool ttsEnabled = true;
+  double ttsRate = 0.5;
+  String ttsVoice = 'female'; // Default to female voice
 
-    _tts.setStartHandler(() {
-      _isSpeaking = true;
-    });
+  factory TTSHelper() => _instance;
 
-    _tts.setCompletionHandler(() {
-      _isSpeaking = false;
-    });
-
-    _tts.setCancelHandler(() {
-      _isSpeaking = false;
-    });
+  TTSHelper._internal() {
+    _loadTTSSettings();
   }
 
-  Future<void> speak(String text, {double pitch = 1.0}) async {
-    // Wait until no speech is happening
-    while (_isSpeaking) {
-      await Future.delayed(Duration(milliseconds: 300));
-    }
+  Future<void> _loadTTSSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    ttsEnabled = prefs.getBool('ttsEnabled') ?? true;
+    ttsRate = prefs.getDouble('ttsRate') ?? 0.5;
+    ttsVoice = prefs.getString('ttsVoice') ?? 'female';
+    _applyTTSSettings();
+  }
 
-    _isSpeaking = true;
-    await _tts.setPitch(pitch);
-    await _tts.speak(text);
+  Future<void> _applyTTSSettings() async {
+    await _flutterTts.setSpeechRate(ttsRate);
+
+    // Set voice based on the selected gender
+    final voices = await _flutterTts.getVoices;
+    final selectedVoice = voices.firstWhere(
+      (voice) => voice.contains(ttsVoice),
+      orElse: () => voices.first,
+    );
+    await _flutterTts.setVoice(selectedVoice);
+  }
+
+  Future<void> speak(String text) async {
+    if (ttsEnabled) {
+      await _flutterTts.speak(text);
+    }
   }
 
   Future<void> stop() async {
-    _isSpeaking = false;
-    await _tts.stop();
+    await _flutterTts.stop();
   }
 
-  Future<bool> isSpeaking() async {
-    return _isSpeaking;
+  Future<void> updateTTSSettings({
+    required bool enabled,
+    required double rate,
+    required String voice,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('ttsEnabled', enabled);
+    await prefs.setDouble('ttsRate', rate);
+    await prefs.setString('ttsVoice', voice);
+
+    ttsEnabled = enabled;
+    ttsRate = rate;
+    ttsVoice = voice;
+
+    _applyTTSSettings();
   }
 }
