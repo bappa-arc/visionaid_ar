@@ -34,7 +34,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  google_mlkit_object_detection: ^0.15.0
   flutter_tts: ^4.2.2
   camera: ^0.11.1
   path_provider: ^2.1.5
@@ -46,6 +45,8 @@ dependencies:
   permission_handler: ^11.0.1
   flutter_phone_direct_caller: ^2.1.1
   whatsapp_unilink: ^2.0.2
+  google_mlkit_text_recognition: ^0.15.0
+  image_picker: ^1.0.4
   speech_to_text:
     git:
       url: https://github.com/bappa-arc/speech_to_text.git
@@ -53,6 +54,7 @@ dependencies:
   telephony: ^0.2.0
   shared_preferences: ^2.2.2
   country_picker: ^2.0.20
+
 
 dev_dependencies:
   flutter_test:

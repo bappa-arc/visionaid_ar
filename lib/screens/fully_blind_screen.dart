@@ -8,6 +8,7 @@
 // import 'package:flutter_vibrate/flutter_vibrate.dart';
 // import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+
 // class FullyBlindScreen extends StatefulWidget {
 //   @override
 //   _FullyBlindScreenState createState() => _FullyBlindScreenState();
@@ -271,6 +272,7 @@
 //     super.dispose();
 //   }
 
+
 //   @override
 //   Widget build(BuildContext context) {
 //     screenWidth = MediaQuery.of(context).size.width;
@@ -368,3 +370,4 @@
 //     );
 //   }
 // }
+
