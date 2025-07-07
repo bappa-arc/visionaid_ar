@@ -6,7 +6,6 @@ import 'package:visionaid_ar/screens/settings_screen.dart';
 import 'package:visionaid_ar/services/emergency_service.dart';
 import '../screens/partially_blind_screen.dart';
 import '../screens/color_blind_screen.dart';
-import '../screens/normal_user_screen.dart';
 import '../widgets/accessibility_option_card.dart';
 import 'package:visionaid_ar/screens/ocr_camera_screen.dart';
 
@@ -25,13 +24,9 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
+      duration: Duration(milliseconds: 1200),
     )..repeat(reverse: true);
 
-    _opacityAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.3,
-    ).animate(_controller);
     _opacityAnimation = Tween<double>(
       begin: 1.0,
       end: 0.3,
@@ -91,26 +86,14 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
           );
         },
       ),
-      AccessibilityOption(
-        title: "Normal",
-        subtitle: "Default settings",
-        icon: Icons.visibility,
-        onTap: () async {
-          if (await Vibrate.canVibrate) {
-            Vibrate.feedback(FeedbackType.success);
-          }
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => NormalUserScreen()),
-          );
-        },
-      ),
     ];
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text('Accessibility Options'),
-        backgroundColor: const Color.fromARGB(255, 157, 168, 230),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
           IconButton(
             icon: Icon(Icons.settings),
@@ -123,36 +106,62 @@ class _AccessibilityScreenState extends State<AccessibilityScreen>
           ),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              AnimatedBuilder(
-                animation: _opacityAnimation,
-                builder:
-                    (context, child) => Opacity(
-                      opacity: _opacityAnimation.value,
-                      child: Icon(
-                        Icons.remove_red_eye,
-                        size: 48,
-                        color: Colors.blue,
-                      ),
-                    ),
+      body: Stack(
+        children: [
+          // Gradient background
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF8EC5FC), Color(0xFFE0C3FC)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              SizedBox(height: 12),
-              Text(
-                "Select Your Visual Ability",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              SizedBox(height: 44),
-              ...options.map((opt) => AccessibilityOptionCard(option: opt)),
-              SizedBox(height: 40),
-            ],
+            ),
           ),
-        ),
+          // Foreground content
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(18.0),
+              child: Column(
+                children: [
+                  AnimatedBuilder(
+                    animation: _opacityAnimation,
+                    builder:
+                        (context, child) => Opacity(
+                          opacity: _opacityAnimation.value,
+                          child: Icon(
+                            Icons.remove_red_eye,
+                            size: 60,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    "Welcome to VisionAid",
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: Colors.deepPurple,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Select your visual ability to get started",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.deepPurple[700],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 36),
+                  ...options.map((opt) => AccessibilityOptionCard(option: opt)),
+                  SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: Stack(
         alignment: Alignment.bottomRight,
