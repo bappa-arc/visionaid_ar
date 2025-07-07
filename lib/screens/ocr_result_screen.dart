@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:visionaid_ar/features/fully_blind/tts_helper.dart';
 
 class OCRResultScreen extends StatefulWidget {
   final String text;
@@ -11,17 +11,15 @@ class OCRResultScreen extends StatefulWidget {
 }
 
 class _OCRResultScreenState extends State<OCRResultScreen> {
-  final FlutterTts _flutterTts = FlutterTts();
+  final TTSHelper _ttsHelper = TTSHelper();
 
   Future<void> _speakText() async {
-    await _flutterTts.setSpeechRate(0.5); // slower for clarity
-    await _flutterTts.setLanguage("en-US");
-    await _flutterTts.speak(widget.text);
+    await _ttsHelper.speak(widget.text);
   }
 
   @override
   void dispose() {
-    _flutterTts.stop();
+    _ttsHelper.stop();
     super.dispose();
   }
 
@@ -47,10 +45,7 @@ class _OCRResultScreenState extends State<OCRResultScreen> {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF8EC5FC),
-              Color(0xFFE0C3FC),
-            ],
+            colors: [Color(0xFF8EC5FC), Color(0xFFE0C3FC)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -60,11 +55,20 @@ class _OCRResultScreenState extends State<OCRResultScreen> {
             children: [
               // Scrollable content
               SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(18, 18, 18, 90), // bottom padding for button
+                padding: const EdgeInsets.fromLTRB(
+                  18,
+                  18,
+                  18,
+                  90,
+                ), // bottom padding for button
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(Icons.text_snippet_rounded, size: 64, color: Colors.deepPurple.shade400),
+                    Icon(
+                      Icons.text_snippet_rounded,
+                      size: 64,
+                      color: Colors.deepPurple.shade400,
+                    ),
                     SizedBox(height: 18),
                     Card(
                       elevation: 8,
@@ -103,12 +107,18 @@ class _OCRResultScreenState extends State<OCRResultScreen> {
                     icon: Icon(Icons.volume_up, size: 32),
                     label: Text(
                       "Read Aloud",
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                       ),
