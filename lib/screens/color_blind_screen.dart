@@ -10,7 +10,7 @@ class ColorBlindScreen extends StatefulWidget {
 class _ColorBlindScreenState extends State<ColorBlindScreen> {
   CameraController? _controller;
   Future<void>? _initializeControllerFuture;
-  String _currentFilter = "Normal";
+  String _currentFilter = "Protanopia";
   final TTSHelper _ttsHelper = TTSHelper();
 
   @override
@@ -176,7 +176,6 @@ class _ColorBlindScreenState extends State<ColorBlindScreen> {
 
   Widget _buildFilterBar() {
     final filters = [
-      {'name': 'Normal', 'icon': Icons.visibility_outlined},
       {'name': 'Protanopia', 'icon': Icons.color_lens},
       {'name': 'Deuteranopia', 'icon': Icons.color_lens},
       {'name': 'Tritanopia', 'icon': Icons.color_lens},
@@ -187,17 +186,16 @@ class _ColorBlindScreenState extends State<ColorBlindScreen> {
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center, // Center the buttons
-        children:
-            filters.map((f) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: _buildFilterButton(
-                  f['name']! as String,
-                  f['icon']! as IconData,
-                ),
-              );
-            }).toList(),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: filters.map((f) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: _buildFilterButton(
+              f['name']! as String,
+              f['icon']! as IconData,
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -321,22 +319,6 @@ class _ColorBlindScreenState extends State<ColorBlindScreen> {
                                               value: "Grayscale",
                                               child: Text(
                                                 "Grayscale: No color distinction",
-                                                style: TextStyle(
-                                                  color: const Color.fromARGB(
-                                                    255,
-                                                    0,
-                                                    0,
-                                                    0,
-                                                  ),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            PopupMenuItem(
-                                              value: "Normal",
-                                              child: Text(
-                                                "Normal: Original camera view",
                                                 style: TextStyle(
                                                   color: const Color.fromARGB(
                                                     255,
