@@ -4,7 +4,7 @@ An Application For Visually Impaired.
 
 
 
-![Logo](images/logo2.png)
+![Logo](images/logo1.png)
 
 
 ## Installation
