@@ -21,7 +21,8 @@ class AccessibilityApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'VisionAid AR',
+      title: 'VisionAid',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'OpenSans',
         primarySwatch: Colors.blue,
