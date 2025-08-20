@@ -53,6 +53,7 @@ dependencies:
     git:
       url: https://github.com/bappa-arc/speech_to_text.git
       path: speech_to_text
+  flutter_launcher_icons: ^0.13.1
 
 
 
@@ -60,7 +61,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+flutter_icons:
+  image_path: "images/logo2.png"
+  android: true
+  ios: true
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

@@ -1,4 +1,4 @@
-package com.example.visionaid_ar
+package com.daik.visionaid_ar
 
 import io.flutter.embedding.android.FlutterActivity
 
